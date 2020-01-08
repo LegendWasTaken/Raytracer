@@ -6,6 +6,7 @@ import me.legend.raytrace.Engine.Utils.Vec3;
 
 public interface Shape {
 
+    boolean loadTexture();
     float hit(Ray ray);
     Colour getColourAt(Vec3 point);
 

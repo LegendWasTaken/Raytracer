@@ -11,6 +11,10 @@ public class Colour {
 
     public float r, g, b;
 
+    public int IntRGB(){
+        return (((int)this.r&0x0ff)<<16)|(((int)this.g&0x0ff)<<8)|((int)this.b&0x0ff);
+    }
+
     public Colour(float r, float g, float b){
         this.r = r;
         this.g = g;
