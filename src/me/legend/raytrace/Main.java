@@ -2,6 +2,7 @@ package me.legend.raytrace;
 
 import me.legend.raytrace.Engine.Colours.Colours;
 import me.legend.raytrace.Engine.Scene;
+import me.legend.raytrace.Engine.Shapes.Plane;
 import me.legend.raytrace.Engine.Shapes.Sphere;
 import me.legend.raytrace.Engine.Textures.TextureManager;
 import me.legend.raytrace.Engine.Textures.TextureType;
@@ -20,7 +21,8 @@ public class Main {
         TextureManager texture = new TextureManager(TextureType.CHECKERBOARD);
         texture.addColour(Colours.cadetblue.getColour());
         texture.addColour(Colours.warmgrey.getColour() );
-        scene.addShape(new Sphere(new Vec3(0, 0, 100), 70F, texture));
+        scene.addShape(new Sphere(new Vec3(0, 20, 100), 70F, texture));
+//        scene.addShape(new Plane(new Vec3(0, 1, 20), new Vec3(0, 1, 0), texture));
         scene.render();
         int fileNumber = 1;
         File image;

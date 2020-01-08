@@ -4,7 +4,6 @@ import me.legend.raytrace.Engine.Colours.Colour;
 import me.legend.raytrace.Engine.Colours.Colours;
 import me.legend.raytrace.Engine.Ray.Ray;
 import me.legend.raytrace.Engine.Textures.TextureManager;
-import me.legend.raytrace.Engine.Utils.Vec2;
 import me.legend.raytrace.Engine.Utils.Vec3;
 
 import static me.legend.raytrace.Engine.Utils.VecUtils.*;
