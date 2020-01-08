@@ -42,7 +42,7 @@ public class Plane implements Shape {
     @Override public Colour getColourAt(Vec3 point) {
         switch(this.manager.getType()){
             case SOLID: return this.manager.getColour(0);
-            case IMAGE: return this.manager.getColourUV(point.x, point.z);
+            case IMAGE: return this.manager.getColourUV(point.x, point.z, true);
             case CHECKERBOARD:
                 float scale = 2;
                 float chess = (float) (Math.floor(point.x / scale) + Math.floor(point.y / scale) + Math.floor(point.z / scale));
