@@ -60,10 +60,14 @@ public class TextureManager {
 
     public Colour getColourUV(float x, float y, boolean infinite) {
         if(infinite){
-            // This occurs when the shape is infinite, and we need to calculate the UV coordinates in this class, since we have access to the image size / aspect ratio
+            // This occurs when the shape is infinite, and we need to calculate the UV coordinates in this class, since we have access to the image size
             if(x < 0) x += this.width;
             if(y < 0) y += this.height;
         }
+
+        /* There is a bug here, where randomly (with larger images most of the time) the u, v. Coords will be out of bounds for some reason. I could introduce a quick hacky fix,
+        * but I want to find the source of the problem before doing that. (as it may lead to larger problems in the future, that I wont know the cause of)*/
+
         int u = (int) (((Math.abs(x) * this.width) + this.dx) % this.width + 1);
         int v = (int) (((Math.abs(y) * this.height) + this.dy) % this.height + 1);
         int intrgb = this.texture.getRGB(this.width - u , this.height - v);
