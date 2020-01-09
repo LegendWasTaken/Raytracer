@@ -1,7 +1,6 @@
 package me.legend.raytrace.Engine.Textures;
 
 import me.legend.raytrace.Engine.Colours.Colour;
-import me.legend.raytrace.Engine.Utils.Vec2;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -11,13 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static me.legend.raytrace.Engine.Utils.NumberUtils.clamp;
-
 public class TextureManager {
 
     private TextureType type;
     private List<Colour> colours;
-    private BufferedImage texture;
+    private Colour[][] pixels;
     private String texturepath = null;
     private int height, width, dx, dy;
 
@@ -48,10 +45,16 @@ public class TextureManager {
     public void loadTexture(){
         if(this.texturepath != null){
             try {
-                File image = new File(this.texturepath);
-                this.texture = ImageIO.read(image);
-                this.width = this.texture.getWidth();
-                this.height = this.texture.getHeight();
+                /* Changing how images are handled and cached (for the better) :p */
+                BufferedImage img = ImageIO.read(new File(this.texturepath));
+
+                this.width = img.getWidth();
+                this.height = img.getHeight();
+                this.pixels = new Colour[this.height][this.width];
+                for(int i=0; i<this.height; i++) for(int j=0; j<this.width; j++) {
+                    int intrgb = img.getRGB(j, i);
+                    this.pixels[this.height - i - 1][j] = new Colour(intrgb >> 16 & 0xFF, (intrgb >> 8) & 0xFF, intrgb & 0xFF);
+                }
             } catch (IOException ex){
                 ex.printStackTrace();
             }
@@ -65,13 +68,13 @@ public class TextureManager {
             if(y < 0) y += this.height;
         }
 
-        /* There is a bug here, where randomly (with larger images most of the time) the u, v. Coords will be out of bounds for some reason. I could introduce a quick hacky fix,
-        * but I want to find the source of the problem before doing that. (as it may lead to larger problems in the future, that I wont know the cause of)*/
+        /* Fixed the bug, it was trying to flip the image while rendering, going to be moving this into the loadtexture function, to hopefully increase speed by a decent amount aswell*/
+        int u = (int) (((Math.abs(x) * this.width) + this.dx) % this.width);
+        int v = (int) (((Math.abs(y) * this.height) + this.dy) % this.height);
 
-        int u = (int) (((Math.abs(x) * this.width) + this.dx) % this.width + 1);
-        int v = (int) (((Math.abs(y) * this.height) + this.dy) % this.height + 1);
-        int intrgb = this.texture.getRGB(this.width - u , this.height - v);
-        return new Colour(intrgb >> 16 & 0xFF, (intrgb >> 8) & 0xFF, intrgb & 0xFF);
+        // Bilinear colour look up (this is going to look buttterrrrr smooooth)
+
+        return this.pixels[v][u];
     }
 
     /* Handling colour stuff */
