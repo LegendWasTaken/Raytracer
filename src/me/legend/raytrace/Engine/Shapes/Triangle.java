@@ -13,7 +13,6 @@ public class Triangle implements Shape {
     private Vec3 a;
     private Vec3 b;
     private Vec3 c;
-    private Vec3 dir;
     private TextureManager manager;
 
     public Triangle(Vec3 a, Vec3 b, Vec3 c, TextureManager manager){
@@ -22,10 +21,6 @@ public class Triangle implements Shape {
         this.c = c;
 
         this.manager = manager;
-
-        Vec3 ca = sub(c, a);
-        Vec3 ba = sub(b, a);
-        this.dir = normalize(cross(ca, ba));
     }
 
 
@@ -41,37 +36,27 @@ public class Triangle implements Shape {
     }
 
     @Override public float hit(Ray ray) {
-        float d = dot(ray.dir, this.dir);
 
-        if(Math.abs(d) > 1E-6){
-            float b = dot(sub(this.a, ray.origin), this.dir) / d;
+        Vec3 edge1 = sub(this.b, this.a);
+        Vec3 edge2 = sub(this.c, this.a);
+        Vec3 h, s, q;
+        float a, f, u, v;
 
-            return b > 0 ? b : -1F;
+        h = cross(ray.dir, edge2);
+        a = dot(edge1, h);
+        if(a > -1E-7 && a < 1E-7) return -1F;
 
-            /*
-            float qx = scale(ray.dir, dist2plane).x + ray.origin.x;
-            float qy = scale(ray.dir, dist2plane).y + ray.origin.y;
-            float qz = scale(ray.dir, dist2plane).z + ray.origin.z;
-            Vec3 q = new Vec3(qx, qy, qz);
+        f = 1.0F / a;
+        s = sub(ray.origin, this.a);
+        u = f * dot(s, h);
+        if(u < 0.0F || u > 1.0F) return -1F;
 
-            Vec3 ca = new Vec3(this.c.x - this.a.x, this.c.y - this.a.y, this.c.z - this.a.z);
-            Vec3 qa = new Vec3(q.x - this.a.x, q.y - this.a.y, q.z - this.a.z);
-            float test1 = dot(cross(ca, qa), this.dir);
+        q = cross(edge1, s);
+        v = f * dot(ray.dir, q);
+        if(v < 0.0F || u + v > 1.0F) return -1F;
 
-            Vec3 bc = new Vec3(this.b.x - this.c.x, this.b.y - this.c.y, this.b.z - this.c.z);
-            Vec3 qc = new Vec3(q.x - this.c.x, q.y - this.c.y, q.z - this.c.z);
-            float test2 = dot(cross(bc, qc), this.dir);
-
-            Vec3 ab = new Vec3(this.a.x - this.b.x, this.a.y - this.b.y, this.a.z - this.b.z);
-            Vec3 qb = new Vec3(q.x - this.b.x, q.y - this.b.y, q.z - this.b.z);
-            float test3 = dot(cross(ab, qb), this.dir);
-
-            if((test1 >= 0) && (test2 >= 0) && (test3 >= 0)){
-                return dist2plane;
-            }*/
-
-        }
-        return -1F;
+        float t = f * dot(edge2, q);
+        if(t > 1E-7 && t < 1 - 1E-7) return t; else return -1F;
     }
 
     @Override

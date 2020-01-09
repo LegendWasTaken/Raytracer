@@ -18,15 +18,15 @@ public class Main {
     public static void main(String... args){
         Scene scene = new Scene(1280, 720);
 
-        TextureManager floor = new TextureManager(TextureType.IMAGE, "./Textures/grass.png");
+        TextureManager floor = new TextureManager(TextureType.IMAGE, "./Textures/memexture.png");
         TextureManager sphere = new TextureManager(TextureType.IMAGE, "./Textures/test0.png");
         TextureManager triangle = new TextureManager(TextureType.SOLID);
         triangle.addColour(Colours.moccasin.getColour());
 //        sphere.addColour(Colours.cadetblue.getColour());
 //        sphere.addColour(Colours.warmgrey.getColour() );
 //        scene.addShape(new Sphere(new Vec3(0, 0, 5), 7F, sphere));
-//        scene.addShape(new Plane(new Vec3(0, 6, 0), new Vec3(0, 1, 0), floor));
-        scene.addShape(new Triangle(new Vec3(3, 6, 0), new Vec3(0, 6, 3), new Vec3(2, 6, 3), triangle));
+//        scene.addShape(new Plane(new Vec3(0, 2, 0), new Vec3(0, 1, 0), floor));
+        scene.addShape(new Triangle(new Vec3(-5, 0, 10), new Vec3(5, 0, 10), new Vec3(0, 5, 10), triangle));
         scene.render();
         int fileNumber = 1;
         File image;
