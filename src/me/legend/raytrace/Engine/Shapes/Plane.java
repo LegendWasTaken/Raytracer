@@ -44,7 +44,7 @@ public class Plane implements Shape {
             case SOLID: return this.manager.getColour(0);
             case IMAGE: return this.manager.getColourUV(point.x, point.z, true);
             case CHECKERBOARD:
-                float scale = 2;
+                float scale = 4;
                 float chess = (float) (Math.floor(point.x / scale) + Math.floor(point.y / scale) + Math.floor(point.z / scale));
                 return this.manager.getColour(chess % 2 == 0F ? 0 : 1);
             default:

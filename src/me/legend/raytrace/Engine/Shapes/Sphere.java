@@ -58,8 +58,9 @@ public class Sphere implements Shape {
                 float v = (float) (0.5 - Math.asin(n.y) / Math.PI);
                 return this.manager.getColourUV(u, v, false);
             case CHECKERBOARD:
-                float scale = 2;
-                float chess = (float) (Math.floor(point.x / scale) + Math.floor(point.y / scale) + Math.floor(point.z / scale));
+                float scale = 4;
+                Vec3 normal = normalize(sub(point, this.origin));
+                float chess = (float) (Math.floor(normal.x * scale) + Math.floor(normal.y * scale) + Math.floor(normal.z * scale));
                 return this.manager.getColour(chess % 2 == 0F ? 0 : 1);
             default:
                 return Colours.black.getColour();

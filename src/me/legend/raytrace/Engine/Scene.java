@@ -15,20 +15,24 @@ import static me.legend.raytrace.Engine.Utils.VecUtils.normalize;
 
 public class Scene {
 
-    private int x, y;
+    private int x, y, aa, aasize;
     private float xfix;
     private Vec3 cameraloc;
     private List<Shape> shapes;
+    private Colour background;
     private Colour[][] pixels;
 
-    public Scene(int x, int y){
+    public Scene(int x, int y, int aa, Colour background){
         this.x = x;
         this.y = y;
+        this.aa = aa; // No clue if this is how anti aliasing is done
+        this.aasize = aa * aa;
         this.xfix = (float) this.x / (float) this.y;
         cameraloc = new Vec3(0, 0, -10);
         this.shapes = new ArrayList<>();
+        this.background = background;
         this.pixels = new Colour[y][x];
-        for(int i=0; i<this.y; i++) for(int j=0; j<this.x; j++) this.pixels[i][j] = Colours.black.getColour();
+        for(int i=0; i<this.y; i++) for(int j=0; j<this.x; j++) this.pixels[i][j] = this.background;
     }
 
     public void addShape(Shape shape){ this.shapes.add(shape); }
@@ -44,39 +48,54 @@ public class Scene {
         if(!this.loadTextures()){
             throw new RuntimeException("Error loading textures");
         }
-        //float[][] distances = new float[this.y][this.x];
-        //float maxDistance = 0;
         long startTime = System.currentTimeMillis();
-        System.out.println("Starting the render at " + startTime);
+        System.out.println("Starting to render");
         for(int i=0; i<this.y; i++){
             for(int j=0; j<this.x; j++){
-                Ray ray = new Ray(this.cameraloc,
-                  normalize(new Vec3(((float) j / this.y * 2) - this.xfix, ((float) i / this.y * 2) - 1, 1F))
-                );
-                float bestDistance = Float.POSITIVE_INFINITY;
-                Shape bestShape = null;
-                for(int a=0; a<this.shapes.size(); a++){
-                    Shape cur = this.shapes.get(a);
-                    float dist = cur.hit(ray);
-                    if(dist > 0 && dist < bestDistance){
-                        bestDistance = dist;
-                        bestShape = cur;
+
+                Colour[] aacolours = new Colour[aa*aa]; /* Array because performance */
+
+                // Anti aliasing time pog
+                for(int ax = 0; ax <aa; ax++){
+                    for(int ay = 0; ay<aa; ay++){
+                        Ray ray = new Ray(this.cameraloc,
+                          normalize(new Vec3((((j + ((float) ax / (float) aa))) / this.y * 2) - this.xfix, (((i + ((float) ay / (float) aa))) / this.y * 2) - 1, 1F))
+                        );
+                        float bestDistance = Float.POSITIVE_INFINITY;
+                        Shape bestShape = null;
+                        for(int a=0; a<this.shapes.size(); a++){
+                            Shape cur = this.shapes.get(a);
+                            float dist = cur.hit(ray);
+                            if(dist > 0 && dist < bestDistance){
+                                bestDistance = dist;
+                                bestShape = cur;
+                            }
+                        }
+                        aacolours[ax + ay] = bestShape != null ? bestShape.getColourAt(ray.getPoint(bestDistance)) : this.background;
                     }
                 }
-                if(bestShape != null) this.pixels[i][j] = bestShape.getColourAt(ray.getPoint(bestDistance));
+
+                Vec3 fc = new Vec3();
+
+                float size = 0;
+
+                for(int a=0; a<aasize; a++){
+                    if(aacolours[a] != null){
+                        size++;
+                        fc.x += aacolours[a].r;
+                        fc.y += aacolours[a].g;
+                        fc.z += aacolours[a].b;
+                    }
+                }
+
+                this.pixels[i][j] = new Colour(fc.x / size, fc.y / size, fc.z / size);
+
             }
         }
 
         long delta = System.currentTimeMillis() - startTime;
+        /* Need to fix the finished rendering message. will do later...*/
         System.out.println("Finished rendering, took " + (int) (delta / 1000) + " seconds, and " + delta + "ms");
-
-        /*
-        for(int i=0; i<this.y; i++){
-            for(int j=0; j<this.x; j++){
-                Vec3 colour = new Vec3(distances[i][j] / maxDistance);
-                this.pixels[i][j] = new Colour(colour.x * 255, colour.y * 255, colour.z * 255);
-            }
-        }*/
     }
 
     public BufferedImage getImage(){
