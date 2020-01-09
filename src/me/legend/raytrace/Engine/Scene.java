@@ -51,9 +51,8 @@ public class Scene {
         for(int i=0; i<this.y; i++){
             for(int j=0; j<this.x; j++){
                 Ray ray = new Ray(this.cameraloc,
-                  new Vec3(((float) j / this.y * 2) - this.xfix, ((float) i / this.y * 2) - 1, 1F)
+                  normalize(new Vec3(((float) j / this.y * 2) - this.xfix, ((float) i / this.y * 2) - 1, 1F))
                 );
-
                 float bestDistance = Float.POSITIVE_INFINITY;
                 Shape bestShape = null;
                 for(int a=0; a<this.shapes.size(); a++){
