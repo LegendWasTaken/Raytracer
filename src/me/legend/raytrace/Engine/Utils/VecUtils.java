@@ -26,10 +26,6 @@ public class VecUtils {
         return new Vec2(a.x - b.x, a.y - b.y);
     }
 
-    public static Vec2 cross(Vec2 a, Vec2 b){
-        return new Vec2(a.x * b.x, b.y * b.y);
-    }
-
     public static Vec2 abs(Vec2 a){
         return new Vec2(Math.abs(a.x), Math.abs(a.y));
     }
@@ -76,7 +72,10 @@ public class VecUtils {
     }
 
     public static Vec3 cross(Vec3 a, Vec3 b){
-        return new Vec3(a.x * b.x, a.y * b.y, a.z * b.z);
+        return new Vec3(
+          a.y * b.z - a.z * b.y,
+          a.z * b.x - a.x * b.z,
+          a.x * b.y - a.y * b.x);
     }
 
     public static Vec3 abs(Vec3 a){
