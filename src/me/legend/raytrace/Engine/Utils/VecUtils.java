@@ -38,6 +38,10 @@ public class VecUtils {
         return new Vec2((float) Math.floor(a.x),(float) Math.floor(a.y));
     }
 
+    public static Vec2 div(Vec2 a, float scale){
+        return new Vec2(a.x / scale, a.y / scale);
+    }
+
     public static Vec2 scale(Vec2 a, float scale){
         return new Vec2(a.x * scale, a.y * scale);
     }
@@ -88,6 +92,10 @@ public class VecUtils {
 
     public static Vec3 floor(Vec3 a){
         return new Vec3((float) Math.floor(a.x), (float) Math.floor(a.y), (float) Math.floor(a.z));
+    }
+
+    public static Vec3 div(Vec3 a, float scale){
+        return new Vec3(a.x / scale, a.y / scale, a.z / scale);
     }
 
     public static Vec3 scale(Vec3 a, float scale){

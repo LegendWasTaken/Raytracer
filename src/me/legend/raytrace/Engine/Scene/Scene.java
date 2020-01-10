@@ -1,4 +1,4 @@
-package me.legend.raytrace.Engine;
+package me.legend.raytrace.Engine.Scene;
 
 import me.legend.raytrace.Engine.Colours.Colour;
 import me.legend.raytrace.Engine.Objects.Light;
@@ -17,19 +17,19 @@ public class Scene {
 
     private int x, y, aa, aasize;
     private float xfix;
-    private Vec3 cameraloc;
+    private Camera camera;
     private List<Shape> shapes;
     private List<Light> lights;
     private Colour background;
     private Colour[][] pixels;
 
-    public Scene(int x, int y, int aa, Colour background){
+    public Scene(Camera camera, int x, int y, int aa, Colour background){
+        this.camera = camera;
         this.x = x;
         this.y = y;
         this.aa = aa; // No clue if this is how anti aliasing is done
         this.aasize = aa * aa;
         this.xfix = (float) this.x / (float) this.y;
-        cameraloc = new Vec3(0, 0, -10);
         this.shapes = new ArrayList<>();
         this.lights = new ArrayList<>();
         this.background = background;
@@ -49,9 +49,8 @@ public class Scene {
     }
 
     public void render(){
-        if(!this.loadTextures()){
-            throw new RuntimeException("Error loading textures");
-        }
+        if(!this.loadTextures()) throw new RuntimeException("Error loading textures");
+
         long startTime = System.currentTimeMillis();
         System.out.println("Starting to render");
         for(int i=0; i<this.y; i++){
@@ -62,9 +61,7 @@ public class Scene {
                 // Anti aliasing time pog
                 for(int ax = 0; ax <aa; ax++){
                     for(int ay = 0; ay<aa; ay++){
-                        Ray ray = new Ray(this.cameraloc,
-                          normalize(new Vec3((((j + ((float) ax / (float) aa))) / this.y * 2) - this.xfix, (((i + ((float) ay / (float) aa))) / this.y * 2) - 1, 1F))
-                        );
+                        Ray ray = this.camera.getRay((((j + ((float) ax / (float) aa))) / this.y * 2) - this.xfix, (((i + ((float) ay / (float) aa))) / this.y * 2) - 1);
                         float bestDistance = Float.POSITIVE_INFINITY;
                         Shape bestShape = null;
                         for(int a=0; a<this.shapes.size(); a++){

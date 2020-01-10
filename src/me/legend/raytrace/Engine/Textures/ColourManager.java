@@ -51,8 +51,8 @@ public class ColourManager {
     /* Handling texture stuff */
     public TextureType getType() { return this.type; }
 
-    public void setDefaultLightLevel(float defaultLightLevel){
-        this.defaultLightLevel = defaultLightLevel;
+    public static void setDefaultLightLevel(float defaultLightLevel){
+        ColourManager.defaultLightLevel = defaultLightLevel;
     }
 
     public void loadTexture(){
@@ -107,24 +107,30 @@ public class ColourManager {
     }
 
     /* Handling shadow stuff and yeah lol */
-    public float getLightIntensity(Vec3 point, List<Shape> shapes, List<Light> lights){
-        float intensity = 0.0F;
-        for(int i=0; i<lights.size(); i++){
-            Ray ray = new Ray(point, normalize(sub(lights.get(i).getPoint(), point)));
+    public Vec3 getLight(Vec3 point, List<Shape> shapes, List<Light> lights){
+
+        Vec3 light = new Vec3(this.defaultLightLevel);
+
+        int lightsize = lights.size();
+        int shapesize = shapes.size();
+        int hits = 0;
+        for(int i=0; i<lightsize; i++){
+            Light cur = lights.get(i);
+            Vec3 lightcolour = cur.getColour().getNormalized().toVec();
+            Ray ray = new Ray(point, normalize(sub(cur.getPoint(), point)));
             boolean hit = false;
-            for(int j=0; j<shapes.size(); j++){
-                if(shapes.get(i).hit(ray) > 0.0F) {
+            for(int j=0; j<shapesize; j++){
+                float t = shapes.get(j).hit(ray);
+                if(t != -1F){
                     hit = true;
                     break;
                 }
             }
-            if(!hit){
-                intensity += 0.2F;
-            } else {
-                intensity /= 0.5F;
-            }
+            if(hit) hits++; else light = new Vec3(light.x * lightcolour.x, light.y * lightcolour.y, light.z * lightcolour.z);
         }
-        return intensity;
+
+        light = div(light, hits == 0 ? 1 : hits);
+        return light;
     }
 
     /* Handling colour stuff */

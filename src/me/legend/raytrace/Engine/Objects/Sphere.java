@@ -6,6 +6,7 @@ import me.legend.raytrace.Engine.Ray.Ray;
 import me.legend.raytrace.Engine.Textures.ColourManager;
 import me.legend.raytrace.Engine.Utils.Vec3;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static me.legend.raytrace.Engine.Utils.VecUtils.*;

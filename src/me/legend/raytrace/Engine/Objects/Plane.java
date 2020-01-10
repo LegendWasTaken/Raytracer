@@ -6,6 +6,7 @@ import me.legend.raytrace.Engine.Ray.Ray;
 import me.legend.raytrace.Engine.Textures.ColourManager;
 import me.legend.raytrace.Engine.Utils.Vec3;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static me.legend.raytrace.Engine.Utils.VecUtils.*;
@@ -58,7 +59,7 @@ public class Plane implements Shape {
             default: colour = Colours.black.getColour(); break;
         }
 
-        float delta = this.manager.getLightIntensity(add(point, scale(this.dir, 0.001F)), shapes, lights);
-        return new Colour(colour.r * delta, colour.g * delta, colour.b * delta);
+        Vec3 delta = this.manager.getLight(add(point, scale(this.dir, 0.001F)), shapes, lights);
+        return new Colour(colour.r * delta.x, colour.g * delta.y, colour.b * delta.z);
     }
 }
