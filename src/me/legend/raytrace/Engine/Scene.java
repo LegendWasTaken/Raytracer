@@ -1,9 +1,9 @@
 package me.legend.raytrace.Engine;
 
 import me.legend.raytrace.Engine.Colours.Colour;
-import me.legend.raytrace.Engine.Colours.Colours;
+import me.legend.raytrace.Engine.Objects.Light;
 import me.legend.raytrace.Engine.Ray.Ray;
-import me.legend.raytrace.Engine.Shapes.Shape;
+import me.legend.raytrace.Engine.Objects.Shape;
 import me.legend.raytrace.Engine.Utils.Vec3;
 
 import java.awt.image.BufferedImage;
@@ -19,6 +19,7 @@ public class Scene {
     private float xfix;
     private Vec3 cameraloc;
     private List<Shape> shapes;
+    private List<Light> lights;
     private Colour background;
     private Colour[][] pixels;
 
@@ -30,12 +31,15 @@ public class Scene {
         this.xfix = (float) this.x / (float) this.y;
         cameraloc = new Vec3(0, 0, -10);
         this.shapes = new ArrayList<>();
+        this.lights = new ArrayList<>();
         this.background = background;
         this.pixels = new Colour[y][x];
         for(int i=0; i<this.y; i++) for(int j=0; j<this.x; j++) this.pixels[i][j] = this.background;
     }
 
     public void addShape(Shape shape){ this.shapes.add(shape); }
+
+    public void addLight(Light light){ this.lights.add(light); }
 
     private boolean loadTextures(){
         for(int i=0; i<this.shapes.size(); i++){
@@ -71,7 +75,7 @@ public class Scene {
                                 bestShape = cur;
                             }
                         }
-                        aacolours[ax + ay] = bestShape != null ? bestShape.getColourAt(ray.getPoint(bestDistance)) : this.background;
+                        aacolours[ax + ay] = bestShape != null ? bestShape.getColourAt(ray.getPoint(bestDistance), this.shapes, this.lights) : this.background;
                     }
                 }
 

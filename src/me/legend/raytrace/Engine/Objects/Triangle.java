@@ -1,10 +1,12 @@
-package me.legend.raytrace.Engine.Shapes;
+package me.legend.raytrace.Engine.Objects;
 
 import me.legend.raytrace.Engine.Colours.Colour;
 import me.legend.raytrace.Engine.Colours.Colours;
 import me.legend.raytrace.Engine.Ray.Ray;
-import me.legend.raytrace.Engine.Textures.TextureManager;
+import me.legend.raytrace.Engine.Textures.ColourManager;
 import me.legend.raytrace.Engine.Utils.Vec3;
+
+import java.util.List;
 
 import static me.legend.raytrace.Engine.Utils.VecUtils.*;
 
@@ -13,9 +15,9 @@ public class Triangle implements Shape {
     private Vec3 v0;
     private Vec3 v1;
     private Vec3 v2;
-    private TextureManager manager;
+    private ColourManager manager;
 
-    public Triangle(Vec3 v0, Vec3 v1, Vec3 v2, TextureManager manager){
+    public Triangle(Vec3 v0, Vec3 v1, Vec3 v2, ColourManager manager){
         this.v0 = v0;
         this.v1 = v1;
         this.v2 = v2;
@@ -60,7 +62,8 @@ public class Triangle implements Shape {
     }
 
     @Override
-    public Colour getColourAt(Vec3 point) {
+    public Colour getColourAt(Vec3 point, List<Shape> shapes, List<Light> lights) {
+        // To be written
         return Colours.aquamarine1.getColour();
     }
 }

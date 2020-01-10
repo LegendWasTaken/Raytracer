@@ -1,42 +1,47 @@
 package me.legend.raytrace.Engine.Textures;
 
 import me.legend.raytrace.Engine.Colours.Colour;
+import me.legend.raytrace.Engine.Objects.Light;
+import me.legend.raytrace.Engine.Objects.Shape;
+import me.legend.raytrace.Engine.Ray.Ray;
 import me.legend.raytrace.Engine.Utils.Vec3;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 
 import static me.legend.raytrace.Engine.Utils.VecUtils.*;
 
 @SuppressWarnings("all")
-public class TextureManager {
+public class ColourManager {
 
     private TextureType type;
     private List<Colour> colours;
     private Colour[][] pixels;
+    private Map<Integer, Colour[][]> mipmaplevels;
     private String texturepath = null;
+    private static float defaultLightLevel = 0.0F;
     private int height, width, dx, dy;
 
-    public TextureManager(TextureType type){
+    public ColourManager(TextureType type){
         this.type = type;
         this.colours = new ArrayList<>();
     }
 
-    public TextureManager(TextureType type, String texturepath){
+    public ColourManager(TextureType type, String texturepath){
         this(type, texturepath, 0, 0);
     }
 
-    public TextureManager(TextureType type, String texturepath, int dx){
+    public ColourManager(TextureType type, String texturepath, int dx){
         this(type, texturepath, dx, 0);
     }
 
-    public TextureManager(TextureType type, String texturepath, int dx, int dy){
+    public ColourManager(TextureType type, String texturepath, int dx, int dy){
         this.type = type;
+        this.mipmaplevels = new HashMap<>(); // To be implemented soonTM
         this.colours = new ArrayList<>();
         this.texturepath = texturepath;
         this.dx = dx;
@@ -46,18 +51,18 @@ public class TextureManager {
     /* Handling texture stuff */
     public TextureType getType() { return this.type; }
 
+    public void setDefaultLightLevel(float defaultLightLevel){
+        this.defaultLightLevel = defaultLightLevel;
+    }
+
     public void loadTexture(){
         if(this.texturepath != null){
             try {
                 /* Changing how images are handled and cached (for the better) :p */
                 BufferedImage img = ImageIO.read(new File(this.texturepath));
 
-                this.width = img.getWidth();
                 this.height = img.getHeight();
-
-                System.out.println(this.width);
-                System.out.println(this.height);
-
+                this.width = img.getWidth();
                 this.pixels = new Colour[this.height][this.width];
                 for(int i=0; i<this.height; i++) for(int j=0; j<this.width; j++) {
                     int intrgb = img.getRGB(j, i);
@@ -99,6 +104,27 @@ public class TextureManager {
 
         Vec3 computed = add(scale(sub(edge1, edge0), sPram), edge1);
         return new Colour(computed.x, computed.y, computed.z);
+    }
+
+    /* Handling shadow stuff and yeah lol */
+    public float getLightIntensity(Vec3 point, List<Shape> shapes, List<Light> lights){
+        float intensity = 0.0F;
+        for(int i=0; i<lights.size(); i++){
+            Ray ray = new Ray(point, normalize(sub(lights.get(i).getPoint(), point)));
+            boolean hit = false;
+            for(int j=0; j<shapes.size(); j++){
+                if(shapes.get(i).hit(ray) > 0.0F) {
+                    hit = true;
+                    break;
+                }
+            }
+            if(!hit){
+                intensity += 0.2F;
+            } else {
+                intensity /= 0.5F;
+            }
+        }
+        return intensity;
     }
 
     /* Handling colour stuff */

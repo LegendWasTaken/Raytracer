@@ -1,24 +1,22 @@
-package me.legend.raytrace.Engine.Shapes;
+package me.legend.raytrace.Engine.Objects;
 
 import me.legend.raytrace.Engine.Colours.Colour;
 import me.legend.raytrace.Engine.Colours.Colours;
 import me.legend.raytrace.Engine.Ray.Ray;
-import me.legend.raytrace.Engine.Textures.TextureManager;
+import me.legend.raytrace.Engine.Textures.ColourManager;
 import me.legend.raytrace.Engine.Utils.Vec3;
+
+import java.util.List;
 
 import static me.legend.raytrace.Engine.Utils.VecUtils.*;
 
 public class Sphere implements Shape {
 
     private Vec3 origin;
-    private TextureManager manager;
+    private ColourManager manager;
     private float radius, radius2;
 
-    private Vec3 getNormal(Vec3 point){
-        return normalize(sub(point, this.origin));
-    }
-
-    public Sphere(Vec3 origin, float radius, TextureManager manager){
+    public Sphere(Vec3 origin, float radius, ColourManager manager){
         this.origin = origin;
         this.manager = manager;
         this.radius = radius;
@@ -49,7 +47,11 @@ public class Sphere implements Shape {
         return -1F;
     }
 
-    @Override public Colour getColourAt(Vec3 point) {
+    public Vec3 getNormal(Vec3 point){
+        return normalize(sub(point, this.origin));
+    }
+
+    @Override public Colour getColourAt(Vec3 point, List<Shape> shapes, List<Light> lights) {
         switch(this.manager.getType()){
             case SOLID: return this.manager.getColour(0);
             case IMAGE:
@@ -58,7 +60,7 @@ public class Sphere implements Shape {
                 float v = (float) (0.5 - Math.asin(n.y) / Math.PI);
                 return this.manager.getColourUV(u, v, false);
             case CHECKERBOARD:
-                float scale = 4;
+                float scale = 2;
                 Vec3 normal = normalize(sub(point, this.origin));
                 float chess = (float) (Math.floor(normal.x * scale) + Math.floor(normal.y * scale) + Math.floor(normal.z * scale));
                 return this.manager.getColour(chess % 2 == 0F ? 0 : 1);
