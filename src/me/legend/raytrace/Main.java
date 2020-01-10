@@ -30,8 +30,8 @@ public class Main {
 //        floor.addColour(Colours.ghostwhite.getColour());
 
 //        scene.addShape(new Sphere(new Vec3(0, -2, 20), 8F, sphere));
-        scene.addShape(new Plane(new Vec3(0, 8, 0), new Vec3(0, 1, 0), floor));
-//        scene.addShape(new Triangle(new Vec3(5, 0, 0), new Vec3(0, 5, 0), new Vec3(-5, 0, 0), floor));
+//        scene.addShape(new Plane(new Vec3(0, 8, 0), new Vec3(0, 1, 0), floor));
+        scene.addShape(new Triangle(new Vec3(5, 0, 0), new Vec3(0, 5, 0), new Vec3(-5, 0, 0), floor));
         scene.render();
         int fileNumber = 1;
         File image;

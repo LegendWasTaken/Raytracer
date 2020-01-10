@@ -56,7 +56,6 @@ public class Triangle implements Shape {
         if(v < 0.0 || u + v > 1.0) return -1F;
 
         float t = f * dot(e2, q);
-
         if(t > 1E-6) return t; else return -1F;
     }
 
